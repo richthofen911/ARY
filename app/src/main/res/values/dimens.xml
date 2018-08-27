@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_mini">2dp</dimen>
+    <dimen name="margin_small">4dp</dimen>
+    <dimen name="margin_regular">8dp</dimen>
+    <dimen name="margin_large">16dp</dimen>
+    <dimen name="margin_xlarge">24dp</dimen>
+    <dimen name="margin_xxlarge">32dp</dimen>
+
+    <dimen name="padding_mini">2dp</dimen>
+    <dimen name="padding_small">4dp</dimen>
+    <dimen name="padding_regular">8dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+    <dimen name="padding_xlarge">24dp</dimen>
+    <dimen name="padding_xxlarge">32dp</dimen>
+    <dimen name="list_height_regular">48dp</dimen>
+</resources>

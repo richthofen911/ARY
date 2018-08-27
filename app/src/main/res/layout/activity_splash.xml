@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="horizontal"
+    android:gravity="center"
+    tools:context=".SplashActivity">
+
+    <TextView
+        android:id="@+id/fullscreen_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:keepScreenOn="true"
+        android:text="CALL"
+        android:textColor="@color/android_green"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/good_dog_plain" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:gravity="center"
+        android:keepScreenOn="true"
+        android:text="OF"
+        android:textColor="@color/android_green"
+        android:textSize="20sp"
+        android:fontFamily="@font/good_dog_plain" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:keepScreenOn="true"
+        android:layout_marginStart="@dimen/margin_small"
+        android:text="DROIDY"
+        android:textColor="@color/android_green"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/good_dog_plain" />
+</LinearLayout>
