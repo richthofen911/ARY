@@ -2,28 +2,57 @@ package net.callofdroidy.adrewardsyou;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adcolony.sdk.AdColony;
 import com.adcolony.sdk.AdColonyInterstitial;
 import com.adcolony.sdk.AdColonyInterstitialListener;
+import com.adcolony.sdk.AdColonyZone;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
-public class MainActivity extends AppCompatActivity implements IAdNetworkRequest{
+import net.callofdroidy.adrewardsyou.adprovider.BaseAdProvider;
+import net.callofdroidy.adrewardsyou.adprovider.ProviderAdColony;
+import net.callofdroidy.adrewardsyou.adprovider.ProviderAdMob;
+
+public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener{
     private static final String TAG = "MainActivity";
 
-    private AdColonyInterstitial adColonyClient;
+    private RadioGroup rgAdProviders;
+    private RadioButton rbAdColony;
+    private RadioButton rbAdMob;
+    private TextView tvAdProvider;
+
+    private InterstitialAd admobClient;
+
+    private BaseAdProvider selectedAdProvider = null;
+    private ProviderAdColony adColony;
+    private ProviderAdMob adMob;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        rgAdProviders = findViewById(R.id.rg_ad_providers);
+        rgAdProviders.setOnCheckedChangeListener(this);
+        rbAdColony = findViewById(R.id.rb_adcolony);
+        rbAdMob = findViewById(R.id.rb_admob);
+        tvAdProvider = findViewById(R.id.tv_ad_provider);
+
+        adColony = new ProviderAdColony();
+        adMob = new ProviderAdMob();
 
         requestPermissions();
 
@@ -41,83 +70,92 @@ public class MainActivity extends AppCompatActivity implements IAdNetworkRequest
     }
 
     private void loadAds() {
+        admobClient = new InterstitialAd(MainActivity.this);
+        admobClient.setAdUnitId(getString(R.string.admob_ad_unit_id));
+        admobClient.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                adMob.setClient(admobClient);
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                Log.e(TAG, "onAdFailedToLoad: " + errorCode);
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when the ad is displayed.
+
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when when the interstitial ad is closed.
+                adMob.reset();
+            }
+        });
+        admobClient.loadAd(new AdRequest.Builder().build());
+
         AdColony.requestInterstitial(getString(R.string.adcolony_zone_id),
                 new AdColonyInterstitialListener() {
             @Override
-            public void onRequestFilled(AdColonyInterstitial adColonyInterstitial) {
-                adColonyInterstitial.setListener(new AdColonyInterstitialListener() {
-                    @Override
-                    public void onRequestFilled(AdColonyInterstitial adColonyInterstitial) {
-                        Log.e(TAG, "onRequestFilled: ");
-                    }
-
-                    @Override
-                    public void onOpened(AdColonyInterstitial ad) {
-                        Log.e(TAG, "onOpened: ");
-                    }
-
-                    @Override
-                    public void onClosed(AdColonyInterstitial ad) {
-                        Log.e(TAG, "onClosed: ");
-                    }
-
-                    @Override
-                    public void onClicked(AdColonyInterstitial ad) {
-                        Log.e(TAG, "onClicked: ");
-                    }
-                });
-                adColonyClient = adColonyInterstitial;
+            public void onRequestFilled(final AdColonyInterstitial adColonyInterstitial) {
+                Log.e(TAG, "onRequestFilled: ");
+                adColony.setClient(adColonyInterstitial);
             }
-        });
+
+            @Override
+            public void onRequestNotFilled(AdColonyZone zone) {
+                Log.e(TAG, "onRequestNotFilled: ");
+            }
+
+            @Override
+            public void onOpened(AdColonyInterstitial ad) {
+                Log.e(TAG, "onOpened: ");
+
+            }
+
+            @Override
+            public void onClosed(AdColonyInterstitial ad) {
+                Log.e(TAG, "onClosed: ");
+                adColony.reset();
+            }
+
+            @Override
+            public void onClicked(AdColonyInterstitial ad) {
+                Log.e(TAG, "onClicked: ");
+            }});
     }
 
 
-    @Override
-    public boolean isAdColonyAvailable() {
-        return adColonyClient != null;
-    }
-
-    @Override
-    public void playAd(int adProvider) {
-        switch (adProvider) {
-            case AdProvider.AdColony:
-                adColonyClient.show();
-                break;
-            default:
-                break;
-        }
+    public void playAd(BaseAdProvider adProvider) {
+        adProvider.play(MainActivity.this);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case 201: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     loadAds();
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
                 } else {
                     requestPermissions();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
         }
     }
 
     public void onWatchAdClick(View view) {
-        if (adColonyClient != null) {
-            playAd(AdProvider.AdColony);
+        if (selectedAdProvider == null) {
+            Toast.makeText(this, "Please select an ad provider", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(
-                    MainActivity.this, "AdColony not available", Toast.LENGTH_SHORT).show();
+            playAd(selectedAdProvider);
         }
+
     }
 
     @Override
@@ -125,5 +163,21 @@ public class MainActivity extends AppCompatActivity implements IAdNetworkRequest
         super.onDestroy();
 
         // TODO: 27/08/18 destroy ad clients
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (checkedId) {
+            case R.id.rb_adcolony:
+                tvAdProvider.setText("Providing by AdColony");
+                selectedAdProvider = adColony;
+                break;
+            case R.id.rb_admob:
+                tvAdProvider.setText("Providing by AdMob");
+                selectedAdProvider = adMob;
+                break;
+            default:
+                break;
+        }
     }
 }

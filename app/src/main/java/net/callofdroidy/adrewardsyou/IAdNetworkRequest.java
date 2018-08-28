@@ -17,5 +17,5 @@ public interface IAdNetworkRequest {
     void loadPoptart(@Nullable Poptart poptart);
     */
 
-    void playAd(int adProvider);
+    //void playAd(int adProvider);
 }

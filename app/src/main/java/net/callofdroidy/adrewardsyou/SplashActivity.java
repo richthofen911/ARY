@@ -9,6 +9,7 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.adcolony.sdk.AdColony;
+import com.google.android.gms.ads.MobileAds;
 
 public class SplashActivity extends AppCompatActivity {
     private TextView mContentView;
@@ -46,5 +47,6 @@ public class SplashActivity extends AppCompatActivity {
                 SplashActivity.this,
                 getString(R.string.adcolony_app_id),
                 getString(R.string.adcolony_zone_id));
+        MobileAds.initialize(SplashActivity.this, getString(R.string.admob_app_id));
     }
 }
