@@ -12,21 +12,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.hyprmx.mediate.HyprMediate;
-import com.hyprmx.mediate.HyprMediateError;
-import com.hyprmx.mediate.HyprMediateListener;
-import com.hyprmx.mediate.HyprMediateReward;
+import com.adcolony.sdk.AdColony;
+import com.adcolony.sdk.AdColonyInterstitial;
+import com.adcolony.sdk.AdColonyInterstitialListener;
 
 import org.json.JSONException;
 
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements HyprMediateListener, IAdNetworkRequest{
+public class MainActivity extends AppCompatActivity implements IAdNetworkRequest{
     private static final String TAG = "MainActivity";
 
     private Handler handler;
 
-    private boolean isHyprMediateAdAvailable = false;
+    //private boolean isHyprMediateAdAvailable = false;
+
+    private AdColonyInterstitial adColonyClient;
 
     //private int checkHyprMediateCount = 100;
 
@@ -54,15 +55,9 @@ public class MainActivity extends AppCompatActivity implements HyprMediateListen
     }
 
     private void initAdNetwork() {
+        AdColony.configure(MainActivity.this, getString(R.string.adcolony_app_id), getString(R.string.adcolony_zone_id));
+
         //try {
-
-            String adId = UUID.randomUUID().toString();
-
-            // init HyprMediate
-            HyprMediate.getInstance().
-                    initialize(this, getString(R.string.hypr_api_token),
-                            adId, this);
-
             /*
             AMSDK.setGdprConsent(MainActivity.this, isGDPRConsented);
             //init
@@ -112,7 +107,13 @@ public class MainActivity extends AppCompatActivity implements HyprMediateListen
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    HyprMediate.getInstance().checkInventory();
+                    AdColony.requestInterstitial(getString(R.string.adcolony_zone_id), new AdColonyInterstitialListener() {
+                        @Override
+                        public void onRequestFilled(AdColonyInterstitial adColonyInterstitial) {
+                            adColonyClient = adColonyInterstitial;
+                        }
+                    });
+
 
                     /*
                     startAppAdClient = new StartAppAd(MainActivity.this);
@@ -147,56 +148,17 @@ public class MainActivity extends AppCompatActivity implements HyprMediateListen
   //      }
     }
 
-    @Override
-    public void hyprMediateCanShowAd(boolean b) {
-        Log.w(TAG, "hyprMediateCanShowAd: " + b);
-        isHyprMediateAdAvailable = b;
-
-        /*
-        if (!b) {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (checkHyprMediateCount > 0) {
-                        checkHyprMediateCount--;
-                        HyprMediate.getInstance().checkInventory();
-                    }
-                }
-            }, 1000);
-        }
-        */
-    }
 
     @Override
-    public void hyprMediateRewardDelivered(HyprMediateReward hyprMediateReward) {
-        Log.w(TAG, "hyprMediateRewardDelivered: " + hyprMediateReward.virtualCurrencyName());
-    }
-
-    @Override
-    public void hyprMediateErrorOccurred(HyprMediateError hyprMediateError) {
-        Log.w(TAG, "hyprMediateErrorOccurred: " + hyprMediateError.errorDescription());
-    }
-
-    @Override
-    public void hyprMediateStartedDisplaying() {
-
-    }
-
-    @Override
-    public void hyprMediateFinishedDisplaying() {
-        // TODO: 27/08/18 reward here
-    }
-
-    @Override
-    public boolean isHyprMediateAvailable() {
-        return false;
+    public boolean isAdColonyAvailable() {
+        return adColonyClient != null;
     }
 
     @Override
     public void playAd(int adProvider) {
         switch (adProvider) {
-            case AdProvider.HyperMediate:
-                HyprMediate.getInstance().showAd();
+            case AdProvider.AdColony:
+                adColonyClient.show();
                 break;
             default:
                 break;
@@ -227,11 +189,11 @@ public class MainActivity extends AppCompatActivity implements HyprMediateListen
     }
 
     public void onWatchAdClick(View view) {
-        if (isHyprMediateAdAvailable) {
-            playAd(AdProvider.HyperMediate);
+        if (adColonyClient != null) {
+            playAd(AdProvider.AdColony);
         } else {
             Toast.makeText(
-                    MainActivity.this, "HyprMediate not available", Toast.LENGTH_SHORT).show();
+                    MainActivity.this, "AdColony not available", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -240,9 +202,5 @@ public class MainActivity extends AppCompatActivity implements HyprMediateListen
         super.onDestroy();
 
         // TODO: 27/08/18 destroy ad clients
-    }
-
-    public void onCheckAdClick(View view) {
-        HyprMediate.getInstance().checkInventory();
     }
 }

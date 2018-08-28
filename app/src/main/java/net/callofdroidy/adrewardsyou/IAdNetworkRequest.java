@@ -1,7 +1,7 @@
 package net.callofdroidy.adrewardsyou;
 
 public interface IAdNetworkRequest {
-    boolean isHyprMediateAvailable();
+    boolean isAdColonyAvailable();
 
     /*
     boolean isStartAppAvailable();

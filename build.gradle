@@ -19,7 +19,8 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url 'http://localhost' }
+        maven { url  "https://adcolony.bintray.com/AdColony" }
+        //maven { url 'http://localhost' }
     }
 }
 
