@@ -15,18 +15,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adcolony.sdk.AdColony;
+import com.adcolony.sdk.AdColonyAdOptions;
+import com.adcolony.sdk.AdColonyAppOptions;
 import com.adcolony.sdk.AdColonyInterstitial;
 import com.adcolony.sdk.AdColonyInterstitialListener;
 import com.adcolony.sdk.AdColonyZone;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.vungle.warren.LoadAdCallback;
+import com.vungle.warren.Vungle;
 
 import net.callofdroidy.adrewardsyou.adprovider.BaseAdProvider;
 import net.callofdroidy.adrewardsyou.adprovider.ProviderAdColony;
 import net.callofdroidy.adrewardsyou.adprovider.ProviderAdMob;
 
-public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener{
+public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, LoadAdCallback{
     private static final String TAG = "MainActivity";
 
     private RadioGroup rgAdProviders;
@@ -53,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
         adColony = new ProviderAdColony();
         adMob = new ProviderAdMob();
+
+        rgAdProviders.check(R.id.rb_adcolony);
 
         requestPermissions();
 
@@ -97,8 +103,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         });
         admobClient.loadAd(new AdRequest.Builder().build());
 
-        AdColony.requestInterstitial(getString(R.string.adcolony_zone_id),
-                new AdColonyInterstitialListener() {
+        AdColonyInterstitialListener adColonyListener = new AdColonyInterstitialListener() {
             @Override
             public void onRequestFilled(final AdColonyInterstitial adColonyInterstitial) {
                 Log.e(TAG, "onRequestFilled: ");
@@ -120,12 +125,20 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             public void onClosed(AdColonyInterstitial ad) {
                 Log.e(TAG, "onClosed: ");
                 adColony.reset();
+                AdColony.requestInterstitial(getString(R.string.adcolony_zone_id), this);
             }
 
             @Override
             public void onClicked(AdColonyInterstitial ad) {
                 Log.e(TAG, "onClicked: ");
-            }});
+            }
+        };
+        AdColony.requestInterstitial(getString(R.string.adcolony_zone_id), adColonyListener);
+
+        if (Vungle.isInitialized()) {
+            Vungle.loadAd(getString(R.string.vungle_placement_id), this);
+        }
+
     }
 
 
@@ -179,5 +192,15 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onAdLoad(String s) {
+
+    }
+
+    @Override
+    public void onError(String s, Throwable throwable) {
+
     }
 }

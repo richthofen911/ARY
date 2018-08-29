@@ -6,4 +6,6 @@
     <string name="adcolony_zone_id">vzeec11e323d46475a94</string>
     <string name="admob_app_id">ca-app-pub-5744551272832504~9112657553</string>
     <string name="admob_ad_unit_id">ca-app-pub-5744551272832504/2970330159</string>
+    <string name="vungle_app_id">5b85cf251c1d32055a2c318a</string>
+    <string name="vungle_placement_id">DEFAULT-8200443</string>
 </resources>

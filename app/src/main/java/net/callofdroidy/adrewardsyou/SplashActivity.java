@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.adcolony.sdk.AdColony;
 import com.google.android.gms.ads.MobileAds;
+import com.vungle.warren.InitCallback;
+import com.vungle.warren.Vungle;
 
 public class SplashActivity extends AppCompatActivity {
     private TextView mContentView;
@@ -47,6 +49,22 @@ public class SplashActivity extends AppCompatActivity {
                 SplashActivity.this,
                 getString(R.string.adcolony_app_id),
                 getString(R.string.adcolony_zone_id));
+        Vungle.init(getString(R.string.vungle_app_id), this.getApplicationContext(), new InitCallback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onAutoCacheAdAvailable(String s) {
+
+            }
+        });
         MobileAds.initialize(SplashActivity.this, getString(R.string.admob_app_id));
     }
 }
