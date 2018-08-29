@@ -8,4 +8,16 @@
     <string name="admob_ad_unit_id">ca-app-pub-5744551272832504/2970330159</string>
     <string name="vungle_app_id">5b85cf251c1d32055a2c318a</string>
     <string name="vungle_placement_id">DEFAULT-8200443</string>
+    <string name="try_to_restart_the_app_if_some_ads_are_not_available">Try to restart the app if some ads are not available.</string>
+    <string name="watch">Watch</string>
+    <string name="vungle">Vungle</string>
+    <string name="admob">AdMob</string>
+    <string name="adcolony">AdColony</string>
+    <string name="choose_default_provider">Choose Default Provider</string>
+
+    <string-array name="ad_providers">
+        <item>AdColony</item>
+        <item>AdMob</item>
+        <item>Vungle</item>
+    </string-array>
 </resources>
