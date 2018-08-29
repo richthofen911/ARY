@@ -5,7 +5,7 @@ android {
     defaultConfig {
         applicationId "net.callofdroidy.adrewardsyou"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 26
         versionCode 2
         versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

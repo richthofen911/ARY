@@ -21,6 +21,11 @@ import com.adcolony.sdk.AdColony;
 import com.adcolony.sdk.AdColonyInterstitial;
 import com.adcolony.sdk.AdColonyInterstitialListener;
 import com.adcolony.sdk.AdColonyZone;
+import com.chartboost.sdk.CBLocation;
+import com.chartboost.sdk.Chartboost;
+import com.chartboost.sdk.ChartboostDelegate;
+import com.chartboost.sdk.Libraries.CBLogging;
+import com.chartboost.sdk.Model.CBError;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -31,6 +36,7 @@ import com.vungle.warren.Vungle;
 import net.callofdroidy.adrewardsyou.adprovider.BaseAdProvider;
 import net.callofdroidy.adrewardsyou.adprovider.ProviderAdColony;
 import net.callofdroidy.adrewardsyou.adprovider.ProviderAdMob;
+import net.callofdroidy.adrewardsyou.adprovider.ProviderChartboost;
 import net.callofdroidy.adrewardsyou.adprovider.ProviderVungle;
 
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener,
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private ImageView ivStatusAdcolony;
     private ImageView ivStatusAdMob;
     private ImageView ivStatusVungle;
+    private ImageView ivStatusChartboost;
 
     private InterstitialAd admobClient;
 
@@ -50,6 +57,33 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private ProviderAdColony adColony;
     private ProviderAdMob adMob;
     private ProviderVungle vungle;
+    private ProviderChartboost chartboost;
+
+    private final ChartboostDelegate chartboostDelegate = new ChartboostDelegate() {
+        @Override
+        public void didCacheRewardedVideo(String location) {
+            super.didCacheRewardedVideo(location);
+            ivStatusChartboost.setImageDrawable(getDrawable(R.drawable.ic_check_green_24dp));
+        }
+
+        @Override
+        public void didFailToLoadRewardedVideo(String location, CBError.CBImpressionError error) {
+            super.didFailToLoadRewardedVideo(location, error);
+        }
+
+        @Override
+        public void didDisplayRewardedVideo(java.lang.String location) {
+            super.didDisplayRewardedVideo(location);
+            ivStatusChartboost.setImageDrawable(getDrawable(R.drawable.ic_cross_red_24dp));
+            chartboost.reset();
+        }
+
+        @Override
+        public void didCloseRewardedVideo(String location) {
+            super.didCloseRewardedVideo(location);
+            Chartboost.cacheRewardedVideo(CBLocation.LOCATION_GAMEOVER);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,18 +104,52 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         ivStatusAdcolony = findViewById(R.id.iv_adcolony_status);
         ivStatusAdMob = findViewById(R.id.iv_admob_status);
         ivStatusVungle = findViewById(R.id.iv_vungle_status);
+        ivStatusChartboost = findViewById(R.id.iv_chartboost_status);
 
         rgAdProviders = findViewById(R.id.rg_ad_providers);
         rgAdProviders.setOnCheckedChangeListener(this);
         tvAdProvider = findViewById(R.id.tv_ad_provider);
 
+        Chartboost.startWithAppId(this, getString(R.string.chartboost_app_id),
+                getString(R.string.chartboost_app_signature));
+        Chartboost.setActivityCallbacks(false);
+        Chartboost.setDelegate(chartboostDelegate);
+        Chartboost.setAutoCacheAds(false);
+        Chartboost.setLoggingLevel(CBLogging.Level.ALL);
+        Chartboost.onCreate(this);
+
         adColony = new ProviderAdColony();
         adMob = new ProviderAdMob();
         vungle = new ProviderVungle(this);
+        chartboost = new ProviderChartboost();
 
         requestPermissions();
 
         loadAds();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Chartboost.onStart(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Chartboost.onResume(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Chartboost.onPause(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Chartboost.onStop(this);
     }
 
     private void requestPermissions() {
@@ -102,15 +170,12 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         admobClient.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                Log.e(TAG, "AdMob onAdLoaded");
                 adMob.setClient(admobClient);
                 ivStatusAdMob.setImageDrawable(getDrawable(R.drawable.ic_check_green_24dp));
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                Log.e(TAG, "AdMob onAdFailedToLoad: " + errorCode);
-                ivStatusAdMob.setImageDrawable(getDrawable(R.drawable.ic_cross_red_24dp));
             }
 
             @Override
@@ -130,26 +195,20 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         AdColonyInterstitialListener adColonyListener = new AdColonyInterstitialListener() {
             @Override
             public void onRequestFilled(final AdColonyInterstitial adColonyInterstitial) {
-                Log.e(TAG, "AdColony onRequestFilled");
                 adColony.setClient(adColonyInterstitial);
                 ivStatusAdcolony.setImageDrawable(getDrawable(R.drawable.ic_check_green_24dp));
             }
 
             @Override
             public void onRequestNotFilled(AdColonyZone zone) {
-                Log.e(TAG, "AdColony onRequestNotFilled: ");
-                ivStatusAdcolony.setImageDrawable(getDrawable(R.drawable.ic_cross_red_24dp));
             }
 
             @Override
             public void onOpened(AdColonyInterstitial ad) {
-                Log.e(TAG, "AdColony onOpened: ");
-
             }
 
             @Override
             public void onClosed(AdColonyInterstitial ad) {
-                Log.e(TAG, "AdColony onClosed: ");
                 adColony.reset();
                 ivStatusAdcolony.setImageDrawable(getDrawable(R.drawable.ic_cross_red_24dp));
                 AdColony.requestInterstitial(getString(R.string.adcolony_zone_id), this);
@@ -157,14 +216,17 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
             @Override
             public void onClicked(AdColonyInterstitial ad) {
-                Log.e(TAG, "onClicked: ");
             }
         };
         AdColony.requestInterstitial(getString(R.string.adcolony_zone_id), adColonyListener);
 
+        // Vungle
         if (Vungle.isInitialized()) {
             Vungle.loadAd(getString(R.string.vungle_placement_id), this);
         }
+
+        // Chartboost
+        Chartboost.cacheRewardedVideo(CBLocation.LOCATION_GAMEOVER);
     }
 
 
@@ -200,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     public void onDestroy() {
         super.onDestroy();
 
+        Chartboost.onDestroy(this);
         // TODO: 27/08/18 destroy ad clients
     }
 
@@ -232,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     // Vungle's callback
     @Override
     public void onAdStart(String s) {
-
     }
 
     // Vungle's callback
@@ -251,7 +313,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.e(TAG, "onItemSelected: position: " + position);
         switch (position) {
             case 0:
                 rgAdProviders.check(R.id.rb_adcolony);
@@ -261,6 +322,9 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 break;
             case 2:
                 rgAdProviders.check(R.id.rb_vungle);
+                break;
+            case 3:
+                rgAdProviders.check(R.id.rb_chartboost);
                 break;
             default:
                 break;

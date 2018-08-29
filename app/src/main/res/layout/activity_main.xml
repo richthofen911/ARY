@@ -66,6 +66,13 @@
             android:padding="4dp"
             android:src="@drawable/ic_cross_red_24dp"
             />
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/iv_chartboost_status"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_cross_red_24dp"
+            />
     </LinearLayout>
 
     <RadioGroup
@@ -89,6 +96,11 @@
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:text="@string/vungle"/>
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/rb_chartboost"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="@string/chartboost"/>
     </RadioGroup>
 
     <TextView
@@ -109,7 +121,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_title"
         app:layout_constraintRight_toRightOf="parent"
         android:gravity="center"
-        android:text="@string/try_to_restart_the_app_if_some_ads_are_not_available"
+        android:text="@string/placeholder_text"
         android:background="@android:color/darker_gray"/>
 
     <Button

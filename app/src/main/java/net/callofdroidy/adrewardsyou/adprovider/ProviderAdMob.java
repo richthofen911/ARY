@@ -5,6 +5,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.InterstitialAd;
 
+import net.callofdroidy.adrewardsyou.R;
+
 public class ProviderAdMob implements BaseAdProvider {
     private InterstitialAd admobClient;
 
@@ -21,8 +23,10 @@ public class ProviderAdMob implements BaseAdProvider {
             admobClient.show();
         } else {
             Toast.makeText(
-                    context, name() + " is currently not available",
-                    Toast.LENGTH_SHORT).show();
+                    context,
+                    context.getString(
+                            R.string.provider_not_avaialable_template, name()), Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 

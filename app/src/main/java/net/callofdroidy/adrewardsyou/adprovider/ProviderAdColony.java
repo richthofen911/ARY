@@ -5,6 +5,8 @@ import android.widget.Toast;
 
 import com.adcolony.sdk.AdColonyInterstitial;
 
+import net.callofdroidy.adrewardsyou.R;
+
 public class ProviderAdColony implements BaseAdProvider {
     private AdColonyInterstitial interstitial;
 
@@ -21,8 +23,10 @@ public class ProviderAdColony implements BaseAdProvider {
             interstitial.show();
         } else {
             Toast.makeText(
-                    context, name() + " is currently not available",
-                    Toast.LENGTH_SHORT).show();
+                    context,
+                    context.getString(
+                            R.string.provider_not_avaialable_template, name()), Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 

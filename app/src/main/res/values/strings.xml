@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">AdRewardsYou</string>
     <string name="watch_ads_to_get_rewards">Watch Ads To Get Rewards</string>
+    <string name="provider_not_avaialable_template">%1$s is currently unavailable.</string>
 
     <string name="adcolony_app_id">app563e5d92ac63456bae</string>
     <string name="adcolony_zone_id">vzeec11e323d46475a94</string>
@@ -8,12 +9,16 @@
     <string name="admob_ad_unit_id">ca-app-pub-5744551272832504/2970330159</string>
     <string name="vungle_app_id">5b85cf251c1d32055a2c318a</string>
     <string name="vungle_placement_id">DEFAULT-8200443</string>
-    <string name="try_to_restart_the_app_if_some_ads_are_not_available">Try to restart the app if some ads are not available.</string>
+    <string name="chartboost_app_id">5b86efb15596580c34b987f7</string>
+    <string name="chartboost_app_signature">a27c2583ae0a159bdaecf9be63560d4310b3ce9d</string>
+
+    <string name="placeholder_text">Try to restart the app if some ads are not available.</string>
     <string name="watch">Watch</string>
     <string name="vungle">Vungle</string>
     <string name="admob">AdMob</string>
     <string name="adcolony">AdColony</string>
     <string name="choose_default_provider">Choose Default Provider</string>
+    <string name="chartboost">Chartboost</string>
 
     <string-array name="ad_providers">
         <item>AdColony</item>

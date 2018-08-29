@@ -3,29 +3,22 @@ package net.callofdroidy.adrewardsyou.adprovider;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.vungle.warren.AdConfig;
-import com.vungle.warren.PlayAdCallback;
-import com.vungle.warren.Vungle;
+import com.chartboost.sdk.CBLocation;
+import com.chartboost.sdk.Chartboost;
 
 import net.callofdroidy.adrewardsyou.R;
 
-public class ProviderVungle implements BaseAdProvider {
-
-    private PlayAdCallback callback;
-    private AdConfig adConfig;
+public class ProviderChartboost implements BaseAdProvider {
     private boolean activated;
 
-    public ProviderVungle(PlayAdCallback callback) {
-        this.callback = callback;
-        adConfig = new AdConfig();
-        adConfig.setAutoRotate(false);
+    public ProviderChartboost() {
         activated = false;
     }
 
     @Override
     public void play(Context context) {
         if (activated) {
-            Vungle.playAd(context.getString(R.string.vungle_placement_id), adConfig, callback);
+            Chartboost.showRewardedVideo(CBLocation.LOCATION_GAMEOVER);
         } else {
             Toast.makeText(
                     context,
@@ -42,7 +35,7 @@ public class ProviderVungle implements BaseAdProvider {
 
     @Override
     public String name() {
-        return "Vungle";
+        return "Chartboost";
     }
 
     @Override
