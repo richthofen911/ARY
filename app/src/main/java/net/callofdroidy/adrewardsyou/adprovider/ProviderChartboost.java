@@ -8,17 +8,16 @@ import com.chartboost.sdk.Chartboost;
 
 import net.callofdroidy.adrewardsyou.R;
 
-public class ProviderChartboost implements BaseAdProvider {
-    private boolean activated;
+public class ProviderChartboost extends BaseAdProvider {
 
     public ProviderChartboost() {
-        activated = false;
+        super();
     }
 
     @Override
     public void play(Context context) {
         if (activated) {
-            Chartboost.showRewardedVideo(CBLocation.LOCATION_GAMEOVER);
+            Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
         } else {
             Toast.makeText(
                     context,
@@ -29,21 +28,7 @@ public class ProviderChartboost implements BaseAdProvider {
     }
 
     @Override
-    public boolean isAvailable() {
-        return false;
-    }
-
-    @Override
     public String name() {
         return "Chartboost";
-    }
-
-    @Override
-    public void reset() {
-        activated = false;
-    }
-
-    public void activate() {
-        activated = true;
     }
 }

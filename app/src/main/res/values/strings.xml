@@ -2,11 +2,12 @@
     <string name="app_name">AdRewardsYou</string>
     <string name="watch_ads_to_get_rewards">Watch Ads To Get Rewards</string>
     <string name="provider_not_avaialable_template">%1$s is currently unavailable.</string>
+    <string name="providing_by_template">Providing by %1$s</string>
 
     <string name="adcolony_app_id">app563e5d92ac63456bae</string>
     <string name="adcolony_zone_id">vzeec11e323d46475a94</string>
     <string name="admob_app_id">ca-app-pub-5744551272832504~9112657553</string>
-    <string name="admob_ad_unit_id">ca-app-pub-5744551272832504/2970330159</string>
+    <string name="admob_ad_unit_id">ca-app-pub-5744551272832504/2463821866</string>
     <string name="vungle_app_id">5b85cf251c1d32055a2c318a</string>
     <string name="vungle_placement_id">DEFAULT-8200443</string>
     <string name="chartboost_app_id">5b86efb15596580c34b987f7</string>

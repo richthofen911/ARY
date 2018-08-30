@@ -7,20 +7,17 @@ import com.adcolony.sdk.AdColonyInterstitial;
 
 import net.callofdroidy.adrewardsyou.R;
 
-public class ProviderAdColony implements BaseAdProvider {
-    private AdColonyInterstitial interstitial;
+public class ProviderAdColony extends BaseAdProvider<AdColonyInterstitial> {
+    //private AdColonyInterstitial interstitial;
 
     public ProviderAdColony() {
-    }
-
-    public void setClient(AdColonyInterstitial interstitial) {
-        this.interstitial = interstitial;
+        super();
     }
 
     @Override
     public void play(Context context) {
-        if (interstitial != null) {
-            interstitial.show();
+        if (activated) {
+            super.t.show();
         } else {
             Toast.makeText(
                     context,
@@ -31,17 +28,16 @@ public class ProviderAdColony implements BaseAdProvider {
     }
 
     @Override
-    public boolean isAvailable() {
-        return false;
-    }
-
-    @Override
     public String name() {
         return "AdColony";
     }
 
+    /*
+
     @Override
-    public void reset() {
-        interstitial = null;
+    public void activate(AdColonyInterstitial adColonyInterstitial) {
+        this.interstitial = adColonyInterstitial;
+        activated = true;
     }
+    */
 }

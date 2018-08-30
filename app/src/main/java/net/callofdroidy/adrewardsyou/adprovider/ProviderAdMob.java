@@ -3,24 +3,22 @@ package net.callofdroidy.adrewardsyou.adprovider;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
 
 import net.callofdroidy.adrewardsyou.R;
 
-public class ProviderAdMob implements BaseAdProvider {
-    private InterstitialAd admobClient;
+public class ProviderAdMob extends BaseAdProvider {
+    private RewardedVideoAd adMobClient;
 
-    public ProviderAdMob() {
-    }
-
-    public void setClient(InterstitialAd client) {
-        this.admobClient = client;
+    public ProviderAdMob(RewardedVideoAd adMobClient) {
+        super();
+        this.adMobClient = adMobClient;
     }
 
     @Override
     public void play(Context context) {
-        if (admobClient != null) {
-            admobClient.show();
+        if (activated) {
+            adMobClient.show();
         } else {
             Toast.makeText(
                     context,
@@ -31,17 +29,7 @@ public class ProviderAdMob implements BaseAdProvider {
     }
 
     @Override
-    public boolean isAvailable() {
-        return false;
-    }
-
-    @Override
     public String name() {
         return "AdMob";
-    }
-
-    @Override
-    public void reset() {
-        admobClient = null;
     }
 }
